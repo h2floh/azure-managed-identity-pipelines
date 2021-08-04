@@ -1,0 +1,8 @@
+https://docs.microsoft.com/en-us/azure/templates/microsoft.resources/resourcegroups?tabs=bicep
+
+https://bicepdemo.z22.web.core.windows.net/
+
+az identity create --name id-build-agent -g self-hosted-agent-rg
+
+az deployment sub create -l koreacentral -f ./main.bicep --parameters username=h2floh sshPublicKey='$(cat ~/.ssh/id_rsa.pub)' --name test
+az group delete --resource-group self-hosted-agent-rg
