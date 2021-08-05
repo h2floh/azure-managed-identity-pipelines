@@ -9,7 +9,7 @@ echo "50d21db4831afe4998332113b9facc3a31188f2d0c7ed258abf6a0b67674413a  actions-
 # Extract the installer
 tar xzf ./actions-runner-linux-x64-2.279.0.tar.gz
 # Create the runner and start the configuration experience
-./config.sh --unattended --url $1 --token $2
+./config.sh --unattended --url $1 --token $2 --replace
 # Install and run the service
 sudo ./svc.sh install
 sudo ./svc.sh start
