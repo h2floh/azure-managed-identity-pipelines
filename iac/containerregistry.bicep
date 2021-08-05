@@ -2,9 +2,10 @@ param location string
 param subnetId string
 param vnetId string
 param principalId string
+param salt string = utcNow()
 
-var acrName = 'acr${uniqueString(resourceGroup().id)}'
-var acrNamePE = 'acr${uniqueString(resourceGroup().id)}-pe'
+var acrName = 'acr${uniqueString(salt)}'
+var acrNamePE = 'acr${uniqueString(salt)}-pe'
 var acrPrivateDnsName = 'privatelink.azurecr.io'
 var dnsZoneName = 'privatelink-azurecr-io'
 

@@ -2,9 +2,10 @@ param location string
 param objectId string
 param subnetId string
 param vnetId string 
+param salt string = utcNow()
 
-var kvName = 'kv${uniqueString(resourceGroup().id)}'
-var vaultNamePE = 'kv${uniqueString(resourceGroup().id)}-pe'
+var kvName = 'kv${uniqueString(salt)}'
+var vaultNamePE = 'kv${uniqueString(salt)}-pe'
 var kvPrivateDnsName = 'privatelink.vaultcore.azure.net'
 var dnsZoneName = 'privatelink-vaultcore-azure-net'
 

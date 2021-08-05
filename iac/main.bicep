@@ -4,6 +4,13 @@ param resourceGroupName string = 'self-hosted-agent-rg'
 param location string = 'koreacentral'
 param username string
 param sshPublicKey string
+param salt string = utcNow()
+param AzDOPATtoken string
+param AzDOVSTSAccountUrl string
+param AzDOTeamProject string
+param AzDODeploymentGroup string
+param GitHubRepoURL string
+param GitHubToken string
 
 module resourceGroups './resourceGroup.bicep' = {
   name: resourceGroupName
@@ -43,6 +50,7 @@ module kv './keyvault.bicep' = {
     subnetId: network.outputs.subnetIdServices
     vnetId: network.outputs.vnetId
     objectId: managedid.outputs.objectId
+    salt: salt
   }
   dependsOn: [
     resourceGroups
@@ -57,6 +65,7 @@ module acr './containerregistry.bicep' = {
     subnetId: network.outputs.subnetIdServices
     vnetId: network.outputs.vnetId
     principalId: managedid.outputs.objectId
+    salt: salt
   }
   dependsOn: [
     resourceGroups
@@ -72,6 +81,12 @@ module buildagent './buildagent.bicep' = {
     username: username
     sshPublicKey: sshPublicKey
     managedId: managedid.outputs.managedId
+    AzDODeploymentGroup: AzDODeploymentGroup
+    AzDOPATtoken: AzDOPATtoken
+    AzDOTeamProject: AzDOTeamProject
+    AzDOVSTSAccountUrl: AzDOVSTSAccountUrl
+    GitHubRepoURL: GitHubRepoURL
+    GitHubToken: GitHubToken
   }
   dependsOn: [
     resourceGroups

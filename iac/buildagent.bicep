@@ -10,6 +10,12 @@ param vmSize string = 'Standard_B1s'
 param username string
 param sshPublicKey string
 param managedId string
+param AzDOPATtoken string
+param AzDOVSTSAccountUrl string
+param AzDOTeamProject string
+param AzDODeploymentGroup string
+param GitHubRepoURL string
+param GitHubToken string
 
 // Create the nic
 module nic './nic.bicep' = {
@@ -88,9 +94,63 @@ resource post_deployment 'Microsoft.Compute/virtualMachines/extensions@2020-12-0
     }
     protectedSettings: {
       commandToExecute: 'bash postDeployment.sh ${username}'
-      fileUris: ''
+      fileUris: [
+        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/postDeployment.sh'
+      ]
     }
   }
+  dependsOn: [
+    vm
+  ]
 }
+
+// Azure Pipelines Agent
+resource azdo_agent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
+  name: '${vmName}/TeamServicesAgentLinux'
+  location: location
+  properties: {
+    publisher: 'Microsoft.VisualStudio.Services'
+    type: 'TeamServicesAgentLinux'
+    typeHandlerVersion: '1.0'
+    autoUpgradeMinorVersion: true
+    settings: {
+      VSTSAccountUrl: AzDOVSTSAccountUrl
+      TeamProject: AzDOTeamProject
+      DeploymentGroup: AzDODeploymentGroup
+      AgentName: vmName
+    }
+    protectedSettings: {
+      PATToken: AzDOPATtoken
+    }
+  }
+  dependsOn: [
+    vm
+  ]
+}
+
+// GitHub Actions Runner
+resource actions_runner 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
+  name: '${vmName}/config-app'
+  location: location
+  properties: {
+    publisher: 'Microsoft.Azure.Extensions'
+    type: 'CustomScript'
+    typeHandlerVersion: '2.1'
+    autoUpgradeMinorVersion: true
+    settings: {
+      skipDos2Unix: false
+    }
+    protectedSettings: {
+      commandToExecute: 'bash githubActionsRunner.sh ${GitHubRepoURL} ${GitHubToken}'
+      fileUris: [
+        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/githubActionsRunner.sh'
+      ]
+    }
+  }
+  dependsOn: [
+    vm
+  ]
+}
+
 
 output vmId string = vm.id
