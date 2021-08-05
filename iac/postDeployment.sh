@@ -6,3 +6,5 @@ sudo apt install docker.io -y
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -a -G docker $1
+
+./githubActionsRunner.sh $2 $3

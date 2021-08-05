@@ -5,11 +5,13 @@ param location string = 'koreacentral'
 param username string
 param sshPublicKey string
 param salt string = utcNow()
+@secure()
 param AzDOPATtoken string
 param AzDOVSTSAccountUrl string
 param AzDOTeamProject string
 param AzDODeploymentGroup string
 param GitHubRepoURL string
+@secure()
 param GitHubToken string
 
 module resourceGroups './resourceGroup.bicep' = {

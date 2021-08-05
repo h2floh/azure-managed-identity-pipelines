@@ -80,7 +80,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2019-07-01' = {
   }
 }
 
-// Post Deployment Script
+// Post Deployment Script && GitHub Actions Runner
 resource post_deployment 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
   name: '${vmName}/config-app'
   location: location
@@ -93,9 +93,10 @@ resource post_deployment 'Microsoft.Compute/virtualMachines/extensions@2020-12-0
       skipDos2Unix: false
     }
     protectedSettings: {
-      commandToExecute: 'bash postDeployment.sh ${username}'
+      commandToExecute: 'bash postDeployment.sh ${username} ${GitHubRepoURL} ${GitHubToken}'
       fileUris: [
         'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/postDeployment.sh'
+        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/githubActionsRunner.sh'
       ]
     }
   }
@@ -121,30 +122,6 @@ resource azdo_agent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = 
     }
     protectedSettings: {
       PATToken: AzDOPATtoken
-    }
-  }
-  dependsOn: [
-    vm
-  ]
-}
-
-// GitHub Actions Runner
-resource actions_runner 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${vmName}/config-app'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Extensions'
-    type: 'CustomScript'
-    typeHandlerVersion: '2.1'
-    autoUpgradeMinorVersion: true
-    settings: {
-      skipDos2Unix: false
-    }
-    protectedSettings: {
-      commandToExecute: 'bash githubActionsRunner.sh ${GitHubRepoURL} ${GitHubToken}'
-      fileUris: [
-        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/githubActionsRunner.sh'
-      ]
     }
   }
   dependsOn: [

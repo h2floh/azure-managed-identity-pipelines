@@ -16,3 +16,15 @@ sudo systemctl enable docker
 sudo usermod -a -G docker <username>
 
 az deployment group create --resource-group self-hosted-agent-rg -f ./test.bicep
+
+az deployment sub create -l koreacentral \
+  -f ./main.bicep --parameters username=h2floh \
+  sshPublicKey="$(cat ~/.ssh/id_rsa.pub)" \
+  AzDOPATtoken= \
+  AzDOVSTSAccountUrl= \
+  AzDOTeamProject= \
+  AzDODeploymentGroup= \
+  GitHubRepoURL= \
+  GitHubToken= \
+  salt="3245as%3425" \
+  --name test
