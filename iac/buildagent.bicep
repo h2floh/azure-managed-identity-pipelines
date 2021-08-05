@@ -9,6 +9,7 @@ param osDiskType string = 'Standard_LRS'
 param vmSize string = 'Standard_B1s'
 param username string
 param sshPublicKey string
+param managedId string
 
 // Create the nic
 module nic './nic.bicep' = {
@@ -20,9 +21,16 @@ module nic './nic.bicep' = {
   }
 }
 
-resource vm_small 'Microsoft.Compute/virtualMachines@2019-07-01' = {
+resource vm 'Microsoft.Compute/virtualMachines@2019-07-01' = {
   name: vmName
   location: location
+  identity: {
+    type: 'UserAssigned'
+    // this is strange but it is what it is https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-template-windows-vm#assign-a-user-assigned-managed-identity-to-an-azure-vm
+    userAssignedIdentities: {
+      '${managedId}': {}
+    }
+  }
   properties: {
     hardwareProfile: {
       vmSize: vmSize
@@ -65,3 +73,24 @@ resource vm_small 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     }
   }
 }
+
+// Post Deployment Script
+resource post_deployment 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
+  name: '${vmName}/config-app'
+  location: location
+  properties: {
+    publisher: 'Microsoft.Azure.Extensions'
+    type: 'CustomScript'
+    typeHandlerVersion: '2.1'
+    autoUpgradeMinorVersion: true
+    settings: {
+      skipDos2Unix: false
+    }
+    protectedSettings: {
+      commandToExecute: 'bash postDeployment.sh ${username}'
+      fileUris: ''
+    }
+  }
+}
+
+output vmId string = vm.id

@@ -5,6 +5,17 @@ param location string
 param subnetId string
 
 var nicName = '${vmName}-nic-${nicNumber}'
+var pipName = '${vmName}-pip-${nicNumber}'
+
+resource pip 'Microsoft.Network/publicIPAddresses@2020-07-01' = {
+  name: pipName
+  location: location
+  tags: {}
+  sku: {
+    name: 'Basic'
+    tier: 'Regional'
+  }
+}
 
 resource nic 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   name: nicName
@@ -17,6 +28,9 @@ resource nic 'Microsoft.Network/networkInterfaces@2020-08-01' = {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
             id: subnetId
+          }
+          publicIPAddress: {
+            id: pip.id 
           }
           primary: true
           privateIPAddressVersion: 'IPv4'

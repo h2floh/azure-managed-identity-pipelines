@@ -24,15 +24,54 @@ module network './network.bicep' = {
   ]
 }
 
+module managedid 'managedidentity.bicep' = {
+  name: 'managedidentity'
+  scope: resourceGroup(resourceGroupName)
+  params: {
+    location: location
+  }
+  dependsOn: [
+    resourceGroups
+  ]
+}
+
+module kv './keyvault.bicep' = {
+  name: 'kv'
+  scope: resourceGroup(resourceGroupName)
+  params: {
+    location: location
+    subnetId: network.outputs.subnetIdServices
+    vnetId: network.outputs.vnetId
+    objectId: managedid.outputs.objectId
+  }
+  dependsOn: [
+    resourceGroups
+  ]
+}
+
+module acr './containerregistry.bicep' = {
+  name: 'acr'
+  scope: resourceGroup(resourceGroupName)
+  params: {
+    location: location
+    subnetId: network.outputs.subnetIdServices
+    vnetId: network.outputs.vnetId
+    principalId: managedid.outputs.objectId
+  }
+  dependsOn: [
+    resourceGroups
+  ]
+}
 
 module buildagent './buildagent.bicep' = {
   name: 'buildagent'
   scope: resourceGroup(resourceGroupName)
   params: {
     location: location
-    subnetId: network.outputs.subnetid
+    subnetId: network.outputs.subnetIdBuildAgents
     username: username
     sshPublicKey: sshPublicKey
+    managedId: managedid.outputs.managedId
   }
   dependsOn: [
     resourceGroups

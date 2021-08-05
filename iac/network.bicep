@@ -16,8 +16,17 @@ resource network 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           addressPrefix: '192.168.83.0/24'
         }
       }
+      {
+        name: 'snet-services'
+        properties: {
+          addressPrefix: '192.168.88.0/24'
+          privateEndpointNetworkPolicies: 'Disabled'
+        }
+      }
     ]
   }   
 }
 
-output subnetid string = network.properties.subnets[0].id
+output vnetId string = network.id
+output subnetIdBuildAgents string = network.properties.subnets[0].id
+output subnetIdServices string = network.properties.subnets[1].id
