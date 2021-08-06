@@ -8,8 +8,7 @@ param salt string = utcNow()
 @secure()
 param AzDOPATtoken string
 param AzDOVSTSAccountUrl string
-param AzDOTeamProject string
-param AzDODeploymentGroup string
+param AzDOAgentPool string
 param GitHubRepoURL string
 @secure()
 param GitHubToken string
@@ -83,9 +82,8 @@ module buildagent './buildagent.bicep' = {
     username: username
     sshPublicKey: sshPublicKey
     managedId: managedid.outputs.managedId
-    AzDODeploymentGroup: AzDODeploymentGroup
+    AzDOAgentPool: AzDOAgentPool
     AzDOPATtoken: AzDOPATtoken
-    AzDOTeamProject: AzDOTeamProject
     AzDOVSTSAccountUrl: AzDOVSTSAccountUrl
     GitHubRepoURL: GitHubRepoURL
     GitHubToken: GitHubToken

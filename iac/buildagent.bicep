@@ -12,8 +12,7 @@ param sshPublicKey string
 param managedId string
 param AzDOPATtoken string
 param AzDOVSTSAccountUrl string
-param AzDOTeamProject string
-param AzDODeploymentGroup string
+param AzDOAgentPool string
 param GitHubRepoURL string
 param GitHubToken string
 
@@ -93,10 +92,11 @@ resource post_deployment 'Microsoft.Compute/virtualMachines/extensions@2020-12-0
       skipDos2Unix: false
     }
     protectedSettings: {
-      commandToExecute: 'bash postDeployment.sh ${username} ${GitHubRepoURL} ${GitHubToken}'
+      commandToExecute: 'bash postDeployment.sh ${username} ${GitHubRepoURL} ${GitHubToken} ${AzDOVSTSAccountUrl} ${AzDOAgentPool} ${AzDOPATtoken}'
       fileUris: [
         'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/postDeployment.sh'
         'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/githubActionsRunner.sh'
+        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/azurePipelinesAgent.sh'
       ]
     }
   }
@@ -104,30 +104,5 @@ resource post_deployment 'Microsoft.Compute/virtualMachines/extensions@2020-12-0
     vm
   ]
 }
-
-// Azure Pipelines Agent
-resource azdo_agent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${vmName}/TeamServicesAgentLinux'
-  location: location
-  properties: {
-    publisher: 'Microsoft.VisualStudio.Services'
-    type: 'TeamServicesAgentLinux'
-    typeHandlerVersion: '1.0'
-    autoUpgradeMinorVersion: true
-    settings: {
-      VSTSAccountUrl: AzDOVSTSAccountUrl
-      TeamProject: AzDOTeamProject
-      DeploymentGroup: AzDODeploymentGroup
-      AgentName: vmName
-    }
-    protectedSettings: {
-      PATToken: AzDOPATtoken
-    }
-  }
-  dependsOn: [
-    vm
-  ]
-}
-
 
 output vmId string = vm.id

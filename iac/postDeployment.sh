@@ -8,3 +8,4 @@ sudo systemctl enable docker
 sudo usermod -a -G docker $1
 
 ./githubActionsRunner.sh $2 $3
+./azurePipelinesAgent.sh $4 $5 $6
