@@ -1,0 +1,39 @@
+name: Retrieve Configuration without providing a secret
+
+on:
+  workflow_dispatch:
+    inputs:
+      acrname:
+        description: 'Azure Container Registry Name'
+        required: true
+        default: ''
+      kvname:
+        description: 'KeyVault Name'
+        required: true
+        default: ''
+
+jobs:
+  init:
+    name: Ensure connection to ACR
+    runs-on: self-hosted
+
+    steps:
+    - name: Login to ACR
+      run: |
+        az login --identity
+        az acr login --name ${{ github.event.inputs.acrname }}
+
+  readfromkeyvault:
+    needs: init
+    name: Read configuration from KeyVault
+    runs-on: self-hosted
+    container: ${{ github.event.inputs.acrname }}.azurecr.io/agent:latest
+
+    steps:
+    - name: Load from KeyVault
+      run: |
+        someconfig=$(az keyvault secret show --vault-name ${{ github.event.inputs.kvname }} --name somekey -o tsv --query 'value')
+    
+    - name: Use Config
+      run: |
+        echo $someconfig        

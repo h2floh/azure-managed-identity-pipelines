@@ -29,5 +29,6 @@ jobs:
 
     - name: Push to ACR
       run: |
-        docker push ${{ github.event.inputs.acrname }}.azurecr.io/agent
+        docker push ${{ github.event.inputs.acrname }}.azurecr.io/agent:$GITHUB_RUN_ID
+        docker push ${{ github.event.inputs.acrname }}.azurecr.io/agent:latest
         
