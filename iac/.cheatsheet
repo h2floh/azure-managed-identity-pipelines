@@ -1,0 +1,30 @@
+https://docs.microsoft.com/en-us/azure/templates/microsoft.resources/resourcegroups?tabs=bicep
+
+https://bicepdemo.z22.web.core.windows.net/
+
+az identity create --name id-build-agent -g self-hosted-agent-rg
+
+
+az deployment sub create -l koreacentral -f ./main.bicep --parameters username=h2floh sshPublicKey="$(cat ~/.ssh/id_rsa.pub)" salt="3245as%3425" --name test
+az group delete --resource-group self-hosted-agent-rg
+
+sudo apt update
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+sudo apt install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -a -G docker <username>
+
+az deployment group create --resource-group self-hosted-agent-rg -f ./test.bicep
+
+az deployment sub create -l koreacentral \
+  -f ./main.bicep --parameters username=h2floh \
+  sshPublicKey="$(cat ~/.ssh/id_rsa.pub)" \
+  AzDOPATtoken= \
+  AzDOVSTSAccountUrl= \
+  AzDOAgentPool= \
+  GitHubRepoURL= \
+  GitHubToken= \
+  salt="3245as%3425" \
+  --name test
+
