@@ -1,13 +1,12 @@
 name: Build the agent container image
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'agent/Dockerfile'
-
-env:
-  ACRNAME: acrfxgj757ivblxk
+  workflow_dispatch:
+    inputs:
+      acrname:
+        description: 'Azure Container Registry Name'
+        required: true
+        default: ''
 
 jobs:
   createagent:
@@ -20,15 +19,15 @@ jobs:
 
     - name: Docker Build
       run: |
-        docker build -f agent/Dockerfile -t $ACRNAME.azurecr.io/agent:$GITHUB_RUN_ID agent/.
-        docker tag $ACRNAME.azurecr.io/agent:$GITHUB_RUN_ID $ACRNAME.azurecr.io/agent:latest
+        docker build -f agent/Dockerfile -t ${{ github.event.inputs.acrname }}.azurecr.io/agent:$GITHUB_RUN_ID agent/.
+        docker tag ${{ github.event.inputs.acrname }}.azurecr.io/agent:$GITHUB_RUN_ID ${{ github.event.inputs.acrname }}.azurecr.io/agent:latest
 
     - name: Login to ACR
       run: |
         az login --identity
-        az acr login --name $ACRNAME
+        az acr login --name ${{ github.event.inputs.acrname }}
 
     - name: Push to ACR
       run: |
-        docker push $ACRNAME.azurecr.io/agent
+        docker push ${{ github.event.inputs.acrname }}.azurecr.io/agent
         
