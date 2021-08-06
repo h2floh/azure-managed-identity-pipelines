@@ -21,7 +21,7 @@ jobs:
     - name: Docker Build
       run: |
         docker build -f agent/Dockerfile -t $ACRNAME.azurecr.io/agent:$GITHUB_RUN_ID agent/.
-        docker tag $ACRNAME.azurecr.io/agent:$GITHUB_RUN_ID $ACRNAME.azurecr.io/agent::latest
+        docker tag $ACRNAME.azurecr.io/agent:$GITHUB_RUN_ID $ACRNAME.azurecr.io/agent:latest
 
     - name: Login to ACR
       run: |
