@@ -35,9 +35,11 @@ jobs:
         az login --identity
 
     - name: Load from KeyVault
+      id: configuration
       run: |
         someconfig=$(az keyvault secret show --vault-name ${{ github.event.inputs.kvname }} --name somekey -o tsv --query 'value')
-    
+        echo "::set-output name=test::$someconfig"
+    # Using steps.configuration.outputs.someconfig
     - name: Use Config
       run: |
-        echo $someconfig        
+        echo ${{ steps.configuration.outputs.someconfig }} 
