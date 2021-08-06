@@ -92,7 +92,7 @@ resource post_deployment 'Microsoft.Compute/virtualMachines/extensions@2020-12-0
       skipDos2Unix: false
     }
     protectedSettings: {
-      commandToExecute: 'bash postDeployment.sh ${username} ${GitHubRepoURL} ${GitHubToken} ${AzDOVSTSAccountUrl} ${AzDOAgentPool} ${AzDOPATtoken}'
+      commandToExecute: 'bash postDeployment.sh ${username} ${GitHubRepoURL} ${GitHubToken} ${AzDOVSTSAccountUrl} ${AzDOPATtoken} ${AzDOAgentPool}'
       fileUris: [
         'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/postDeployment.sh'
         'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/githubActionsRunner.sh'
