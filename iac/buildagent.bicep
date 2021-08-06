@@ -11,7 +11,7 @@ param username string
 param sshPublicKey string
 param managedId string
 param AzDOPATtoken string
-param AzDOVSTSAccountUrl string
+param AzDOAccountUrl string
 param AzDOAgentPool string
 param GitHubRepoURL string
 param GitHubToken string
@@ -92,11 +92,11 @@ resource post_deployment 'Microsoft.Compute/virtualMachines/extensions@2020-12-0
       skipDos2Unix: false
     }
     protectedSettings: {
-      commandToExecute: 'bash postDeployment.sh ${username} ${GitHubRepoURL} ${GitHubToken} ${AzDOVSTSAccountUrl} ${AzDOPATtoken} ${AzDOAgentPool}'
+      commandToExecute: 'bash postDeployment.sh ${username} ${GitHubRepoURL} ${GitHubToken} ${AzDOAccountUrl} ${AzDOPATtoken} ${AzDOAgentPool}'
       fileUris: [
-        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/postDeployment.sh'
-        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/githubActionsRunner.sh'
-        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/h2floh/init/iac/azurePipelinesAgent.sh'
+        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/main/iac/sh/postDeployment.sh'
+        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/main/iac/sh/githubActionsRunner.sh'
+        'https://raw.githubusercontent.com/h2floh/azure-managed-identity-pipelines/main/iac/sh/azurePipelinesAgent.sh'
       ]
     }
   }

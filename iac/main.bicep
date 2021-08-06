@@ -1,15 +1,25 @@
 targetScope = 'subscription'
 
+@description('Name of the resource group')
 param resourceGroupName string = 'self-hosted-agent-rg'
+@description('Azure region for all services')
 param location string = 'koreacentral'
+@description('Username for the VM')
 param username string
+@description('Public SSH Key for user')
 param sshPublicKey string
+@description('Salt to generate globally unique service names')
 param salt string = utcNow()
+@description('Azure DevOps PAT Token with Agent Pools manage scope')
 @secure()
 param AzDOPATtoken string
-param AzDOVSTSAccountUrl string
+@description('Azure DevOps Account URL https://dev.azure.com/<youraccount>')
+param AzDOAccountUrl string
+@description('Azure DevOps Pipeline Pool e.g. \'Default\'')
 param AzDOAgentPool string
+@description('Your GitHub Repo URL e.g. https://github.com/<youraccount>/<yourrepo>')
 param GitHubRepoURL string
+@description('Your GitHub Runner Token - from Repo Settings -> Actions -> Runners -> Add Runner')
 @secure()
 param GitHubToken string
 
@@ -84,7 +94,7 @@ module buildagent './buildagent.bicep' = {
     managedId: managedid.outputs.managedId
     AzDOAgentPool: AzDOAgentPool
     AzDOPATtoken: AzDOPATtoken
-    AzDOVSTSAccountUrl: AzDOVSTSAccountUrl
+    AzDOAccountUrl: AzDOAccountUrl
     GitHubRepoURL: GitHubRepoURL
     GitHubToken: GitHubToken
   }
