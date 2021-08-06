@@ -11,5 +11,5 @@ tar xzf ./actions-runner-linux-x64-2.279.0.tar.gz
 # Create the runner and start the configuration experience
 ./config.sh --unattended --url $1 --token $2 --replace
 # Install and run the service
-./svc.sh install
-./svc.sh start
+sudo ./svc.sh install
+sudo ./svc.sh start
