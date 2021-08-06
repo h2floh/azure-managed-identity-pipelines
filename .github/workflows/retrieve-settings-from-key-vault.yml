@@ -30,6 +30,10 @@ jobs:
     container: ${{ github.event.inputs.acrname }}.azurecr.io/agent:latest
 
     steps:
+    - name: Login Azure
+      run: |
+        az login --identity
+
     - name: Load from KeyVault
       run: |
         someconfig=$(az keyvault secret show --vault-name ${{ github.event.inputs.kvname }} --name somekey -o tsv --query 'value')
