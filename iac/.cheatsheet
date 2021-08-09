@@ -20,11 +20,11 @@ az deployment group create --resource-group self-hosted-agent-rg -f ./test.bicep
 az deployment sub create -l koreacentral \
   -f ./main.bicep --parameters username=h2floh \
   sshPublicKey="$(cat ~/.ssh/id_rsa.pub)" \
-  AzDOPATtoken= \
-  AzDOVSTSAccountUrl= \
-  AzDOAgentPool= \
-  GitHubRepoURL= \
-  GitHubToken= \
-  salt="3245as%3425" \
+  AzDOPATtoken='' \
+  AzDOAccountUrl='' \
+  AzDOAgentPool='' \
+  GitHubRepoURL='' \
+  GitHubToken='' \
+  salt="3245as%3430" \
   --name test
-
+  

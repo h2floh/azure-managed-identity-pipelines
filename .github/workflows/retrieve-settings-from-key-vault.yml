@@ -28,12 +28,31 @@ jobs:
     name: Read configuration from KeyVault
     runs-on: self-hosted
     container: ${{ github.event.inputs.acrname }}.azurecr.io/agent:latest
-
+    outputs:
+      someconfig: ${{ steps.configuration.outputs.someconfig }}
     steps:
+    - name: Login Azure
+      run: |
+        az login --identity
+
     - name: Load from KeyVault
+      id: configuration
       run: |
         someconfig=$(az keyvault secret show --vault-name ${{ github.event.inputs.kvname }} --name somekey -o tsv --query 'value')
-    
+        echo "::set-output name=someconfig::$someconfig"
+    # Using within job
     - name: Use Config
       run: |
-        echo $someconfig        
+        echo ${{ steps.configuration.outputs.someconfig }}
+
+  reuseconfig:
+    needs: readfromkeyvault
+    name: Reuses the config value from previous job
+    runs-on: self-hosted
+    container: ${{ github.event.inputs.acrname }}.azurecr.io/agent:latest
+
+    steps:
+    # Using in other job
+    - name: Use Config
+      run: |
+        echo ${{needs.readfromkeyvault.outputs.someconfig}}
