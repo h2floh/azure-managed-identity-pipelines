@@ -48,7 +48,7 @@ stages:
     dependsOn: configuration
     variables:
       someconfig: $[ stageDependencies.configuration.readfromkeyvault.outputs['readKeyVault.someconfig'] ]
-    displayName: 'KB Publish for ${{ parameters.lang }} to ${{ parameters.env }}'
+    displayName: 'Reuse config from previous stage'
     jobs:
     - job: reuseconfig
       displayName: 'Reuse config from previous stage'
