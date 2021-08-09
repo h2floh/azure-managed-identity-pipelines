@@ -23,7 +23,6 @@ stages:
           az login --identity
         displayName: 'AZ login'
 
-    jobs:
     - job: readfromkeyvault
       displayName: 'Read configuration from KeyVault'
       dependsOn: init
