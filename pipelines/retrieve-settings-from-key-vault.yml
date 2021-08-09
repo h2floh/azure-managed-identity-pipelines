@@ -9,7 +9,7 @@ parameters:
     default: ''
     displayName: 'Azure Key Vault Name'
 
-triggers: none
+trigger: none
 
 stages:
   - stage: configuration

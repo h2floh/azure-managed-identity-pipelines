@@ -6,7 +6,7 @@ parameters:
     default: ''
     displayName: 'Azure Container Registry Name'
 
-triggers: none
+trigger: none
 
 jobs:
 - job: buildagent
