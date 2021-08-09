@@ -1,13 +1,13 @@
 parameters:
   - name: 'agentPool'
     default: ''
-    description: 'Azure Agent Pool Name'
+    displayName: 'Azure Agent Pool Name'
   - name: 'acrname'
     default: ''
-    description: 'Azure Container Registry Name'
+    displayName: 'Azure Container Registry Name'
   - name: 'kvname'
     default: ''
-    description: 'Azure Key Vault Name'
+    displayName: 'Azure Key Vault Name'
 
 triggers: none
 
