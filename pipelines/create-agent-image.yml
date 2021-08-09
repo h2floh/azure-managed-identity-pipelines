@@ -1,0 +1,32 @@
+parameters:
+  - name: 'agentPool'
+    default: ''
+    description: 'Azure Agent Pool Name'
+  - name: 'acrname'
+    default: ''
+    description: 'Azure Container Registry Name'
+
+triggers: none
+
+jobs:
+- job: buildagent
+  displayName: 'Create Build Agent Image'
+  pool: ${{ parameters.agentPool }}
+  steps:
+  - script: | 
+      az login --identity
+    displayName: 'Az Login with MSI'
+
+  - script: | 
+      az acr login --name ${{ parameters.acrname }}
+    displayName: 'ACR Login'
+
+  - script: |
+      docker build -f agent/Dockerfile -t ${{ parameters.acrname }}.azurecr.io/agent:$(Build.BuildNumber) agent/.
+    displayName: 'Build Build-Agent Image'
+
+  - script: |
+       docker tag ${{ parameters.acrname }}.azurecr.io/agent:$(Build.BuildNumber) ${{ parameters.acrname }}.azurecr.io/agent:latest
+       docker push ${{ parameters.acrname }}.azurecr.io/agent:$(Build.BuildNumber)
+       docker push ${{ parameters.acrname }}.azurecr.io/agent:latest
+    displayName: 'Push Build-Agent Image'

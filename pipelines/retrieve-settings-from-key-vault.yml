@@ -1,0 +1,64 @@
+parameters:
+  - name: 'agentPool'
+    default: ''
+    description: 'Azure Agent Pool Name'
+  - name: 'acrname'
+    default: ''
+    description: 'Azure Container Registry Name'
+  - name: 'kvname'
+    default: ''
+    description: 'Azure Key Vault Name'
+
+triggers: none
+
+stages:
+  - stage: configuration
+    displayName: 'Read and use Configuration'
+
+    jobs:
+    - job: init
+      displayName: 'Ensure connection to ACR'
+      steps:
+      - script: |
+          az login --identity
+        displayName: 'AZ login'
+
+    jobs:
+    - job: readfromkeyvault
+      displayName: 'Read configuration from KeyVault'
+      dependsOn: init
+      pool: ${{ parameters.agentPool }}
+      container: ${{ parameters.acrname }}.azurecr.io/agent:latest
+      steps:
+      
+      - script: |
+          az login --identity
+        displayName: 'AZ login'
+      
+      - script: |
+          someconfig=$(az keyvault secret show --vault-name ${{ parameters.kvname }} --name somekey -o tsv --query 'value')
+          echo "##vso[task.setvariable variable=someconfig;isOutput=true]$someconfig"
+        name: readKeyVault
+        displayName: 'Retrieve Configuration'
+
+      - script: |
+          echo $(readKeyVault.someconfig)
+        displayName: 'Use Config'
+
+  - stage: reuseconfig
+    dependsOn: configuration
+    variables:
+      someconfig: $[ stageDependencies.configuration.readfromkeyvault.outputs['readKeyVault.someconfig'] ]
+    displayName: 'KB Publish for ${{ parameters.lang }} to ${{ parameters.env }}'
+    jobs:
+    - job: reuseconfig
+      displayName: 'Reuse config from previous stage'
+      pool: ${{ parameters.agentPool }}
+      container: ${{ parameters.acrname }}.azurecr.io/agent:latest
+      # Using in other job & stage
+      steps:
+
+      - script: |
+          echo $(someconfig)
+        displayName: 'Use Config'
+
