@@ -18,6 +18,7 @@ stages:
     jobs:
     - job: init
       displayName: 'Ensure connection to ACR'
+      pool: ${{ parameters.agentPool }}
       steps:
       - script: |
           az login --identity
