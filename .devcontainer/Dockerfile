@@ -11,3 +11,4 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 # Install Azure CLI with Bicep
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash \
     && az bicep install
+    && az extension install --name azure-devops

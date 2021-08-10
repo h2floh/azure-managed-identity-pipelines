@@ -117,3 +117,5 @@ resource kv_private_endpoint_dns 'Microsoft.Network/privateEndpoints/privateDnsZ
     vaultPE
   ]
 }
+
+output kv_name string = keyVault.name
