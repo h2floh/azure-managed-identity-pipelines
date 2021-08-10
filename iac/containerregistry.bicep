@@ -99,3 +99,5 @@ resource acr_private_endpoint_dns 'Microsoft.Network/privateEndpoints/privateDns
     acrPE
   ]
 }
+
+output acr_name string = acr.name

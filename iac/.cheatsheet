@@ -28,3 +28,37 @@ az deployment sub create -l koreacentral \
   salt="3245as%3430" \
   --name test
   
+
+https://docs.microsoft.com/en-us/azure/devops/cli/service-endpoint?view=azure-devops
+AZURE_DEVOPS_EXT_GITHUB_PAT 
+https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token
+
+
+export AZURE_DEVOPS_EXT_GITHUB_PAT=''
+
+service_connection_id=$(az devops service-endpoint github create \
+--github-url https://github.com/h2floh/azure-managed-identity-pipelines/ \
+--name github \
+--organization https://dev.azure.com/h2floh \
+--project azure-managed-identity-pipelines \
+-o tsv --query 'id')
+
+az pipelines create \
+--name 'Create Agent Image' \
+--description 'Builds and Pushes the agent image' \
+--repository https://github.com/h2floh/azure-managed-identity-pipelines/ \
+--branch main \
+--yml-path pipelines/create-agent-image.yml \
+--organization https://dev.azure.com/h2floh \
+--project azure-managed-identity-pipelines \
+--service-connection $service_connection_id
+
+az pipelines create \
+--name 'Retrieve Configuration without providing a secret' \
+--description 'Retrieve Configuration without providing a secret' \
+--repository https://github.com/h2floh/azure-managed-identity-pipelines/ \
+--branch main \
+--yml-path pipelines/retrieve-settings-from-key-vault.yml \
+--organization https://dev.azure.com/h2floh \
+--project azure-managed-identity-pipelines \
+--service-connection $service_connection_id

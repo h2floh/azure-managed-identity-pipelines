@@ -103,3 +103,5 @@ module buildagent './buildagent.bicep' = {
   ]
 }
 
+output acr_name string = acr.outputs.acr_name
+output kv_name string = kv.outputs.kv_name
